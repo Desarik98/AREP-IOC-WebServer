@@ -1,6 +1,6 @@
 package edu.escuelaing.arep;
 
-import edu.escuelaing.arep.nextspring.GetMapping;
+import edu.escuelaing.arep.nextspring.RequestMapping;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,11 +34,11 @@ public class HttpServer {
         return _instance;
     }
 
-    public static void main(String... args) throws IOException, URISyntaxException {
+    /*public static void main(String... args) throws IOException, URISyntaxException {
         HttpServer.getInstance().startServer(args);
-    }
+    }*/
 
-    public void startServer(String[] args) throws IOException, URISyntaxException {
+    public void startServer(List<String> args) throws IOException, URISyntaxException {
         int port = 35000;
         ServerSocket serverSocket = null;
         try {
@@ -64,18 +65,17 @@ public class HttpServer {
         serverSocket.close();
     }
 
-    private void loadComponents(String[] componentsList) {
+    private void loadComponents(List<String> componentsList) {
         for (String component : componentsList) {
             Class c = null;
             try {
                 c = Class.forName(component);
                 for (Method m : c.getDeclaredMethods()) {
-                    if (m.isAnnotationPresent(GetMapping.class)) {
-                        String uri = m.getAnnotation(GetMapping.class).value();
+                    if (m.isAnnotationPresent(RequestMapping.class)) {
+                        String uri = m.getAnnotation(RequestMapping.class).value();
                         services.put(uri, m);
                     }
                 }
-                ;
             } catch (ClassNotFoundException e) {
                 Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, "Component not found", e);
             }
