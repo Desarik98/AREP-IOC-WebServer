@@ -39,7 +39,7 @@ public class HttpServer {
     }*/
 
     public void startServer(List<String> args) throws IOException, URISyntaxException {
-        int port = 35000;
+        int port = getPort();
         ServerSocket serverSocket = null;
         try {
             serverSocket = new ServerSocket(port);
@@ -121,7 +121,7 @@ public class HttpServer {
         String response = "";
         //the path has the form: "/do/*"
         Method m = services.get(serviceURI.getPath().substring(3));
-        if(m == null){
+        if (m == null) {
             return default404HTMLResponse("Service Not found");
         }
         try {
@@ -199,10 +199,17 @@ public class HttpServer {
                         + " <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
                         + " </head>"
                         + " <body>"
-                        + " <div><h1>Error 404 "+msg+" </h1></div>"
+                        + " <div><h1>Error 404 " + msg + " </h1></div>"
                         + " <img src=\"https://hubblesite.org/files/live/sites/hubble/files/home/resource-gallery/articles/_images/STSCI-H-p1427a-2300x2100.jpg?t=tn1200\">"
                         + " </body>"
                         + "</html>";
         return outputLine;
+    }
+
+    static int getPort() {
+        if (System.getenv("PORT") != null) {
+            return Integer.parseInt(System.getenv("PORT"));
+        }
+        return 8080; //returns default port if heroku-port isn't set (i.e. on localhost)
     }
 }
